@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Range</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <style>
+       .error{
+           border:2px solid red !important;
+       }
+       .number_of_people{
+           border-bottom: 1px solid gray;
+       }
+       .bill_amount{
+           border-bottom: 1px solid gray;;
+       }
+       .calculate{
+           cursor: pointer;
+       }
+       .calculate:hover{
+           border:1px solid gray;
+           box-shadow: 1px 1px 1px gray;
+       }
+       .active_percent{
+           border:2px solid green;
+           font-weight: 700;
+           transform: scale(1.4)
+           
+       }
+       .percent{
+           border-radius: 2px;
+           cursor: pointer;
+       }
+       .percent:hover{
+            transform: scale(1.4);
+            box-shadow: 1px 1px 1px green;
+       }
+    </style>
+</head>
+<body>
+    <div class="col-6 mx-auto bg-light shadow-lg rounded mt-5 pb-3">
+        <div class="tip_amount_block border-bottom py-5">
+            <div class="col-6 mx-auto">
+                <div class="row">
+                    <div class="col-6">
+                        <h5>Tip Amount</h5>
+                    </div>
+                    <div class="col-6">
+                       <h1>$ <span class="tip_amount_num">0</span></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="total_per_person_block col-8 mx-auto py-5">
+            <div class="row">
+                <div class="col-6">
+                    <h5>Total Per Person</h5>
+                </div>
+                <div class="col-6">
+                    <h1>$ <span class="total_per_person_num">0</span></h1>
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-7 p-5">
+                <h1 class="bill_amount" contenteditable="true">
+                    100
+                </h1>
+                <p>Bill Amount</p>
+            </div>
+            <div class="col-5 p-5">
+                <h1 class="number_of_people" contenteditable="true">
+                    1
+                </h1>
+                <p>Number Of People</p>
+            </div>
+        </div>
+        <div class="col-12 row py-5 text-center">
+            <div class="col ms-5 bg-info percent" data-number="5">
+                5%
+            </div>
+            <div class="col ms-5 bg-info percent active_percent" data-number="10">
+                10%
+            </div>
+            <div class="col ms-5 bg-info percent" data-number="15">
+                15%
+            </div>
+            <div class="col ms-5 bg-info percent" data-number="20">
+                20%
+            </div>
+        </div>
+        <div class="calculate bg-warning ms-5 p-2  col-3 text-center rounded">
+            <h3 class="m-0 p-0">calculate</h3>
+        </div>
+    </div>
+    
+    <script>
+        let calculate_btn = document.querySelector(".calculate");
+        let bill_amount_elem = document.querySelector(".bill_amount");
+        let tip_amount_elem = document.querySelector(".tip_amount_num");
+        let total_per_person_num = document.querySelector(".total_per_person_num")
+        let number_of_people_elem = document.querySelector(".number_of_people");
+        let percentage = document.querySelectorAll(".percent")
+        let percent = 10;
+        let bill_amount_num = 0;
+        let number_of_people = 0;
+        let check_number_of_people = false;
+        let check_bill_amount_num = false;
+
+        calculate_btn.addEventListener("click", ()=>{
+            bill_amount_elem.classList.remove("error");
+            number_of_people_elem.classList.remove("error");
+
+            bill_amount_num = bill_amount_elem.innerText;  
+            bill_amount_num = parseFloat(bill_amount_num);
+            
+            number_of_people = number_of_people_elem.innerText;
+            number_of_people = parseFloat(number_of_people);
+        
+            if(number_of_people == "" || number_of_people <= 0 || typeof number_of_people =="string" || Number.isInteger(number_of_people) ==  false){
+                check_number_of_people = error(number_of_people_elem);        
+            }else {
+                check_number_of_people = true
+            }
+
+            if(bill_amount_num == "" || bill_amount_num <=0 || typeof bill_amount_num == "string" || isNaN(bill_amount_num) == true){           
+                check_bill_amount_num =  error(bill_amount_elem);              
+            }else{
+                check_bill_amount_num = true;
+            }
+            
+            if(check_number_of_people == true && check_bill_amount_num == true){
+                calculation();
+            }else{
+                return false;
+            }
+        
+        })
+
+        
+
+        function calculation(){
+            let total_tip = bill_amount_num * percent/100;
+            total_tip = Math.round((total_tip + Number.EPSILON) * 100) / 100;
+            tip_amount_elem.innerText = total_tip;
+
+
+            let total_per_person_summ = bill_amount_num / number_of_people;
+            let tip_per_person = total_tip/number_of_people;
+            let total = total_per_person_summ + tip_per_person;
+
+
+            total = Math.round((total + Number.EPSILON) * 100) / 100;
+            total_per_person_num.innerText = total;
+        }
+        let last = percentage[1];
+        percentage.forEach((percent_item)=>{
+            
+            percent_item.addEventListener("click", ()=>{
+                last.classList.remove("active_percent")
+                percent = percent_item.dataset.number;
+                percent_item.classList.add("active_percent")
+                last = percent_item;
+            })
+        })
+
+        function error(elem){
+            elem.classList.add("error");    
+            return false;       
+        }
+       
+    </script>
+</body>
+</html>
+        
